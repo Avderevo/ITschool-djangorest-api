@@ -23,7 +23,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'django_extensions',
     'users',
+    'study',
     'corsheaders',
 ]
 
@@ -118,9 +120,9 @@ REST_FRAMEWORK = {
 
 }
 
-#CORS_ORIGIN_WHITELIST = (
-#    'localhost:3000',
-#)
+CORS_ORIGIN_WHITELIST = (
+   'localhost:3000',
+)
 
 API_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -131,7 +133,29 @@ JWT_AUTH  = {
     'JWT_EXPIRATION_DELTA' : datetime.timedelta ( seconds = 300 ),
     'JWT_ALLOW_REFRESH' : True ,
     'JWT_REFRESH_EXPIRATION_DELTA' : datetime.timedelta ( days = 7 ),
-    'JWT_AUTH_COOKIE': 'JWT'
-   # ' JWT_RESPONSE_PAYLOAD_HANDLER': os.path.join(API_DIR, 'jwt_response_payload_handler'),
-    #' JWT_PAYLOAD_HANDLER': os.path.join(API_DIR, 'my_jwt_payload_handler')
+    'JWT_AUTH_COOKIE': 'JWT',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'ITS_api.utils.my_jwt_response_handler',
+   # 'JWT_PAYLOAD_HANDLER': 'ITS_api.utils.my_jwt_payload_handler'
+
 }
+
+USER_EMAIL_ACTIVATION = False
+
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_PASSWORD = ''  # my gmail password
+EMAIL_HOST_USER = ''  # my gmail username
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = ''
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 360,
+    }
+}
+
+INTERNAL_IPS = '127.0.0.1'
