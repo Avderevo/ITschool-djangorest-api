@@ -8,6 +8,8 @@ urlpatterns = [
     path('token-auth/', obtain_jwt_token),
     path('token-refresh/', refresh_jwt_token),
     path('users/', include('users.urls')),
+    path('study/', include('study.urls'))
+
  ]
 
 

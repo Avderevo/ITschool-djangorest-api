@@ -1,17 +1,25 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
-from users.models import Activation
+from users.models import Activation, Profile
 from ITS_api import settings
 from .mail_sender import send_confirm_email
 from django.contrib.auth.tokens import default_token_generator as dtg
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('__all__')
+
+
+
 class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer()
 
     class Meta:
         model = User
-        fields = ('username', 'id', 'email', 'is_active')
+        fields = ('username', 'id', 'email', 'is_active', 'profile')
 
 
 class UserSerializerWithToken(serializers.ModelSerializer):
@@ -46,4 +54,5 @@ class UserSerializerWithToken(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('token', 'username', 'password', 'email')
+
 

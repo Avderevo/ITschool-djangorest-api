@@ -7,6 +7,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
 
+from rest_framework import viewsets
+from users.models import Profile
+
+from users import serializers
 
 
 class ListUsers(generics.ListCreateAPIView):
@@ -16,10 +20,7 @@ class ListUsers(generics.ListCreateAPIView):
 
 
 class UserCreate(APIView):
-    """
-    Create a new user. It's called 'UserList' because normally we'd have a get
-    method here too, for retrieving a list of all User objects.
-    """
+
     permission_classes = (permissions.AllowAny,)
 
 
@@ -46,6 +47,19 @@ class CurrentUserView(APIView):
     def get(self, request):
         serializer = UserSerializerWithToken(request.user)
         return Response(serializer.data)
+
+
+
+
+
+
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    qs = Profile.objects.all()
+    serializer_class = serializers.ProfileSerializer
+
 
 '''
 @api_view(['POST'])
@@ -100,4 +114,5 @@ class UserRetrieveUpdateAPIView():
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)'''
+        return Response(serializer.data, status=status.HTTP_200_OK) 
+'''

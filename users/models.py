@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from study.models import Course
+from study.models import Course, Lesson
 
 
 class Activation(models.Model):
@@ -11,19 +11,12 @@ class Activation(models.Model):
 class Profile(models.Model):
     is_teacher = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    course = models.ManyToManyField(
-        Course,
-        through='Statistic',
-        through_fields=('course', 'user'),
 
-    )
+    def __str__(self):
+        return f"Профиль {self.user}"
 
-
-class Statistic(models.Model):
-    course = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    user = models.ForeignKey(Course, on_delete=models.CASCADE)
-    homework_done = models.IntegerField(default=0)
-    homework_all = models.IntegerField(blank=True)
+    class Meta:
+        verbose_name = "Профиль пользователя"
+        verbose_name_plural = 'Профиль пользователей'
 
