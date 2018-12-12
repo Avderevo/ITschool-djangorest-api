@@ -21,12 +21,12 @@ $ git clone https://github.com/Avderevo/ITschool-djangorest-api
 $ pip install requirements.txt
 ```
 
-#### 4 Create migrations for the database:
+#### 5 Create migrations for the database:
 ``` 
 $ python manage.py makemigrations users study
 $ python manage.py migrate
 ```
-#### 5  Start project:
+#### 6  Start project:
 
 ``` 
 $ python manage.py runserver
