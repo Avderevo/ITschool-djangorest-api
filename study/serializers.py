@@ -12,7 +12,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            'name_1', 'name_2','is_active', 'homework_all'
+            'name_1', 'name_2','description', 'homework_all', 'id'
         )
 
 
@@ -40,4 +40,4 @@ class CourseStatisticSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CourseStatistic
-        fields = ('course', 'homework_done')
+        fields = ('course', 'homework_done', 'is_active', 'is_paid', 'id')

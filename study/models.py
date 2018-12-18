@@ -6,19 +6,21 @@ class Course(models.Model):
     name_1 = models.CharField(max_length=50, verbose_name='Курс')
     name_2 = models.CharField(max_length=50)
     homework_all = models.IntegerField(blank=True, verbose_name='Всего домашек')
+    description = models.TextField(blank=True)
     class Meta:
         verbose_name_plural = 'Курсы'
         verbose_name = 'Курс'
 
     def __str__(self):
-        return f'Курс {self.name}'
+        return f'Курс {self.name_1}'
 
 
 class CourseStatistic(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     homework_done = models.IntegerField(default=0, verbose_name='Сделанных домашек')
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False, verbose_name='Сдал тест')
+    is_paid = models.BooleanField(default=False, verbose_name='Курс оплачен')
 
     def __str__(self):
         return f'Статистика курса {self.user} {self.course}'

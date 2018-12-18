@@ -9,6 +9,7 @@ from rest_framework import permissions, status
 
 from users import serializers as user_serializers
 from . import serializers
+from users.serializers import UserSerializer
 
 '''
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -35,17 +36,48 @@ class CourseVieSet(viewsets.ViewSet):
 class LessonVieSet(viewsets.ViewSet):
     permission_classes = (permissions.AllowAny,)
 
-
-    def lesson_vs_statistic(self, request, userid, courseid):
-        qs=LessonStatistic.objects.filter(user_id=userid).filter(course_id = courseid)
+    def lesson_vs_statistic(self, request, courseid):
+        qs = LessonStatistic.objects.filter(user=request.user).filter(course_id=courseid)
         serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
         return Response(serializer.data)
 
-    def course_statistic(self, request, userid, courseid):
-        c = CourseStatistic.objects.filter(user_id=userid).filter(course_id=courseid)
+    def course_statistic(self, request, courseid):
+        c = CourseStatistic.objects.filter(user=request.user).filter(course_id=courseid)
         serializer = serializers.CourseStatisticSerializer(c, many=True)
 
         return  Response(serializer.data)
+
+    def user_course_list(self, request):
+        course_stat = CourseStatistic.objects.filter(user = request.user)
+        serializer = serializers.CourseStatisticSerializer(course_stat, many=True)
+        return Response(serializer.data)
+
+
+
+
+class CourseTest(APIView):
+
+    def post(self, request, courseid=2):
+        test = request.data['testResult']
+        if test['testResult'] and test['testResult'] == '4':
+            user= request.user
+            statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=courseid).exists()
+            if not statistic:
+                course = Course.objects.filter(id = courseid).first()
+                course_stat = CourseStatistic()
+                course_stat.user = user
+                course_stat.course = course
+                course_stat.is_active = True
+                course_stat.save()
+                lessons = Lesson.objects.filter(course_id=courseid)
+                for lesson in lessons:
+                    lesson_stat = LessonStatistic()
+                    lesson_stat.lesson = lesson
+                    lesson_stat.user = user
+                    lesson_stat.course = course
+                    lesson_stat.save()
+                return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 
