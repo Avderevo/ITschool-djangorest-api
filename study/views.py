@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from users.models import Profile
 from rest_framework.views import APIView
-from .models import Course, Lesson, LessonStatistic, CourseStatistic
+from .models import Course, Lesson, LessonStatistic, CourseStatistic, Message
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import permissions, status
@@ -57,7 +57,7 @@ class LessonVieSet(viewsets.ViewSet):
 
 class CourseTest(APIView):
 
-    def post(self, request, courseid=2):
+    def post(self, request, courseid=1):
         test = request.data['testResult']
         if test['testResult'] and test['testResult'] == '4':
             user= request.user
@@ -79,5 +79,32 @@ class CourseTest(APIView):
                 return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+class SaveChatMessage(APIView):
+    def post(self, request ):
+        data = request.data
+        user = request.user
+        statistic = LessonStatistic.objects.filter(id = data['statisticId']).first()
+        message = Message()
+        message.lesson_statistic = statistic
+        message.message_body = data['message']
+        message.user = user
+        message.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+class GetChatMessage(APIView):
+
+    def get(self, request, statisticId):
+
+        message = Message.objects.filter(lesson_statistic__id = statisticId)
+        if message:
+            s = serializers.MessageSerializer(message)
+            data = s.data
+        else:
+            data = []
+        return Response(data)
 
 

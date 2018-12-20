@@ -35,6 +35,7 @@ class Lesson(models.Model):
     is_homework = models.BooleanField(default=False)
     homework_title = models.CharField(max_length=125, blank=True, verbose_name='Домашнее задание' )
     lesson_number = models.IntegerField(verbose_name='Номер урока')
+#    date_start = models.DateTimeField(blank=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
 
     def __str__(self):
@@ -65,13 +66,17 @@ class LessonStatistic(models.Model):
         return f"Статистика {self.user} урок {self.lesson}"
 
 
+
+
 class Message(models.Model):
 
-    message_body = models.TextField()
-    date = models.DateTimeField(auto_now_add=True)
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    message_body = models.TextField(blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+    lesson_statistic = models.ForeignKey(LessonStatistic, on_delete=models.CASCADE)
+
+ #   user = models.ForeignKey(User, on_delete=models.CASCADE)
+ #   lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
     def __str__(self):
         return 'Сообщение'
@@ -83,10 +88,6 @@ class Message(models.Model):
 
 
 
-
-class LessonChat(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
 
 

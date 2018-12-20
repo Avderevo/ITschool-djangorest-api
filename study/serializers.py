@@ -19,7 +19,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ('lesson_title', 'is_homework', 'homework_title', 'lesson_number')
+        fields = ('lesson_title', 'is_homework', 'homework_title', 'lesson_number', 'id')
 
 
 
@@ -31,7 +31,7 @@ class LessonVsStatisticSerialiser(serializers.ModelSerializer):
     class Meta:
         model = LessonStatistic
         fields = (
-            'lesson', 'course', 'homework_status', 'user'
+            'lesson', 'course', 'homework_status', 'user', 'id'
         )
 
 
@@ -41,3 +41,13 @@ class CourseStatisticSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseStatistic
         fields = ('course', 'homework_done', 'is_active', 'is_paid', 'id')
+
+
+
+
+
+class MessageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = ('id', 'message_body', 'date', 'lesson_statistic')
