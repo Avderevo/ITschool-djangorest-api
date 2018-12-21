@@ -26,6 +26,9 @@ $ pip install requirements.txt
 $ python manage.py makemigrations users study
 $ python manage.py migrate
 ```
+
+#### !!! ( Для начала работы с курсами, нужно в ручную в админке добавить данные хотя бы для одного Курса - модели "Course" и пару уроков для этого курса - модель "Lesson" )
+
 #### 6  Start project:
 
 ``` 
