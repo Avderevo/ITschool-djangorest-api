@@ -95,16 +95,14 @@ class SaveChatMessage(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
-class GetChatMessage(APIView):
+class GetChatMessage(viewsets.ViewSet):
+    permission_classes = (permissions.AllowAny,)
 
-    def get(self, request, statisticId):
 
+    def get_message(self, request, statisticId):
         message = Message.objects.filter(lesson_statistic__id = statisticId)
-        if message:
-            s = serializers.MessageSerializer(message)
-            data = s.data
-        else:
-            data = []
-        return Response(data)
+        s = serializers.MessageSerializer(message, many=True)
+
+        return Response(s.data)
 
 

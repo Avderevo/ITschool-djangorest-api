@@ -16,6 +16,23 @@ class CourseSerializer(serializers.ModelSerializer):
         )
 
 
+class LessonStatisticSerializer(serializers.ModelSerializer):
+    class Meta:
+        mosel = LessonStatistic
+        fields = (
+            'homework_status', 'user', 'id'
+        )
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Message
+        fields = ('message_body', 'date', 'user', 'lesson_statistic')
+
+
+
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
@@ -45,9 +62,3 @@ class CourseStatisticSerializer(serializers.ModelSerializer):
 
 
 
-
-class MessageSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Message
-        fields = ('id', 'message_body', 'date', 'lesson_statistic')
