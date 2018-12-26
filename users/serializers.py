@@ -39,14 +39,6 @@ class UserSerializerWithToken(serializers.ModelSerializer):
         user = self.Meta.model(**validated_data)
         if password is not None:
             user.set_password(password)
-        if settings.USER_EMAIL_ACTIVATION:
-            user.is_active = False
-            code = dtg.make_token(user)
-            act = Activation()
-            act.code = code
-            act.user = user
-            send_confirm_email(user.email, code)
-
         user.save()
         return user
 

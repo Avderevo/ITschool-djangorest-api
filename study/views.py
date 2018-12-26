@@ -52,6 +52,11 @@ class LessonVieSet(viewsets.ViewSet):
         serializer = serializers.CourseStatisticSerializer(course_stat, many=True)
         return Response(serializer.data)
 
+    def one_course(self, request, name):
+        course = Course.objects.get(name_1 = name)
+        serializer = serializers.CourseSerializer(course)
+        return Response(serializer.data)
+
 
 
 

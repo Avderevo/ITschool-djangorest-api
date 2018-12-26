@@ -7,6 +7,9 @@ class Course(models.Model):
     name_2 = models.CharField(max_length=50)
     homework_all = models.IntegerField(blank=True, verbose_name='Всего домашек')
     description = models.TextField(blank=True)
+#    date_start = models.CharField(max_length=50, blank=True)
+#    label = models.BooleanField(default=False)
+
     class Meta:
         verbose_name_plural = 'Курсы'
         verbose_name = 'Курс'
@@ -75,8 +78,6 @@ class Message(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     lesson_statistic = models.ForeignKey(LessonStatistic, on_delete=models.CASCADE)
 
- #   user = models.ForeignKey(User, on_delete=models.CASCADE)
- #   lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
     def __str__(self):
         return 'Сообщение'
