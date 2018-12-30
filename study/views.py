@@ -44,7 +44,6 @@ class LessonVieSet(viewsets.ViewSet):
     def course_statistic(self, request, courseid):
         c = CourseStatistic.objects.filter(user=request.user).filter(course_id=courseid)
         serializer = serializers.CourseStatisticSerializer(c, many=True)
-
         return  Response(serializer.data)
 
     def user_course_list(self, request):
@@ -57,31 +56,40 @@ class LessonVieSet(viewsets.ViewSet):
         serializer = serializers.CourseSerializer(course)
         return Response(serializer.data)
 
+    def get_all_students(self, request, id):
+        students = User.objects.filter(coursestatistic__course_id = id)
+        serializer = serializers.UserSerializer(students, many=True)
+        return Response(serializer.data)
 
+    def get_students_statistics(self, request, userId, courseId):
+        qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId)
+        serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
+        return Response(serializer.data)
 
 
 class CourseTest(APIView):
 
-    def post(self, request, courseid=1):
+    def post(self, request, name):
         test = request.data['testResult']
-        if test['testResult'] and test['testResult'] == '4':
-            user= request.user
-            statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=courseid).exists()
-            if not statistic:
-                course = Course.objects.filter(id = courseid).first()
+        user = request.user
+        course = Course.objects.filter(name_1=name).first()
+        statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=course.id).exists()
+        if not statistic:
+            if test['testResult'] and test['testResult'] == '4':
                 course_stat = CourseStatistic()
                 course_stat.user = user
                 course_stat.course = course
                 course_stat.is_active = True
                 course_stat.save()
-                lessons = Lesson.objects.filter(course_id=courseid)
+                lessons = Lesson.objects.filter(course_id=course.id)
                 for lesson in lessons:
                     lesson_stat = LessonStatistic()
                     lesson_stat.lesson = lesson
                     lesson_stat.user = user
                     lesson_stat.course = course
                     lesson_stat.save()
-                return Response(status=status.HTTP_201_CREATED)
+
+            return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -111,3 +119,26 @@ class GetChatMessage(viewsets.ViewSet):
         return Response(s.data)
 
 
+'''class CourseTest(APIView):
+
+    def post(self, request, courseid=1):
+        test = request.data['testResult']
+        if test['testResult'] and test['testResult'] == '4':
+            user= request.user
+            statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=courseid).exists()
+            if not statistic:
+                course = Course.objects.filter(id = courseid).first()
+                course_stat = CourseStatistic()
+                course_stat.user = user
+                course_stat.course = course
+                course_stat.is_active = True
+                course_stat.save()
+                lessons = Lesson.objects.filter(course_id=courseid)
+                for lesson in lessons:
+                    lesson_stat = LessonStatistic()
+                    lesson_stat.lesson = lesson
+                    lesson_stat.user = user
+                    lesson_stat.course = course
+                    lesson_stat.save()
+                return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)'''
