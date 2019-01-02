@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserSerializer, UserSerializerWithToken
 from django.views.generic import View
-from .models import Activation
+from .models import Activation, Profile
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.tokens import default_token_generator as dtg
 from ITS_api import settings
@@ -16,7 +16,6 @@ from .mail_sender import send_confirm_email
 
 
 class ListUsers(generics.ListCreateAPIView):
-    permission_classes = (permissions.AllowAny,)
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -24,14 +23,14 @@ class UserCreate(APIView):
 
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = UserSerializerWithToken(data=request.data)
         if serializer.is_valid():
             serializer.save()
-
+            user = User.objects.get(username = request.data['username'])
+            Profile.objects.create(user=user, status=int(request.data['status']))
 
             if settings.USER_EMAIL_ACTIVATION:
-                user = User.objects.get(username = request.data['username'])
                 user.is_active = False
                 code = dtg.make_token(user)
                 act = Activation()
@@ -71,3 +70,12 @@ class ConfirmEmailView(APIView):
             act.delete()
             return Response(status=status.HTTP_201_CREATED)
 
+
+
+class ListCourseStudents(APIView):
+
+    @staticmethod
+    def get(request, courseId):
+        students = User.objects.filter(coursestatistic__course_id=courseId)
+        serializer = UserSerializer(students, many=True)
+        return Response(serializer.data)

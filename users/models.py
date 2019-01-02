@@ -11,6 +11,7 @@ class Activation(models.Model):
 class Profile(models.Model):
     is_teacher = models.BooleanField(default=False)
     is_student = models.BooleanField(default=False)
+    status = models.IntegerField(default=1)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):

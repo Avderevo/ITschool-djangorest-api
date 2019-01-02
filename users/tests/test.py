@@ -46,7 +46,7 @@ class BaseViewTest(APITestCase):
     def register_a_user(self, username="", password="", email=""):
         return self.client.post(
             reverse(
-                "register-user",
+                "users:create_user",
 
             ),
             data=json.dumps(
@@ -155,7 +155,7 @@ class VerifyJSONWebTokenTestsSymmetric(TokenTestCase):
         and itself when passed to the validation endpoint.
         """
         client = APIClient(enforce_csrf_checks=True)
-        orig_token = self.get_token()
+        orig_token = self.get_token('test_user', "testing")
 
         # Now try to get a refreshed token
         response = client.post( reverse(

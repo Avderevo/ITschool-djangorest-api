@@ -6,43 +6,25 @@ from .models import Course, Lesson, LessonStatistic, CourseStatistic, Message
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import permissions, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 
 from users import serializers as user_serializers
 from . import serializers
 from users.serializers import UserSerializer
 
-'''
-class ProfileViewSet(viewsets.ModelViewSet):
-    qs = Profile.objects.all()
-    serializer_class = user_serializers.ProfileSerializer
 
-
-class CourseVieSet(viewsets.ViewSet):
-    permission_classes = (permissions.AllowAny,)
-
-    def all_course(self):
-        queryset = Course.objects.all()
-
-        serializer = serializers.CourseSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def user_course(self, request, id):
-        profile = Profile.objects.filter(user_id=id).first()
-        queryset = Course.objects.filter(profile = profile)
-        serializer = serializers.CourseSerializer(queryset, many=True)
-        return  Response(serializer.data)
-'''
 
 class LessonVieSet(viewsets.ViewSet):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
-    def lesson_vs_statistic(self, request, courseid):
-        qs = LessonStatistic.objects.filter(user=request.user).filter(course_id=courseid)
+    def lesson_vs_statistic(self, request, courseId):
+        qs = LessonStatistic.objects.filter(user=request.user).filter(course_id=courseId)
         serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
         return Response(serializer.data)
 
-    def course_statistic(self, request, courseid):
-        c = CourseStatistic.objects.filter(user=request.user).filter(course_id=courseid)
+    def course_statistic(self, request, courseId):
+        c = CourseStatistic.objects.filter(user=request.user).filter(course_id=courseId)
         serializer = serializers.CourseStatisticSerializer(c, many=True)
         return  Response(serializer.data)
 
@@ -51,28 +33,54 @@ class LessonVieSet(viewsets.ViewSet):
         serializer = serializers.CourseStatisticSerializer(course_stat, many=True)
         return Response(serializer.data)
 
-    def one_course(self, request, name):
-        course = Course.objects.get(name_1 = name)
-        serializer = serializers.CourseSerializer(course)
-        return Response(serializer.data)
-
-    def get_all_students(self, request, id):
-        students = User.objects.filter(coursestatistic__course_id = id)
-        serializer = serializers.UserSerializer(students, many=True)
-        return Response(serializer.data)
-
     def get_students_statistics(self, request, userId, courseId):
         qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId)
         serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
         return Response(serializer.data)
 
+    def get_teacher_courses(self, request):
+        user = request.user
+        if user.profile.is_teacher:
+            course_stat = CourseStatistic.objects.filter(user=request.user)
+        else:
+            course_stat=[]
+        serializer = serializers.CourseStatisticSerializer(course_stat, many=True)
+        return Response(serializer.data)
+
+
+
+
+class CourseVieSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
+
+    def one_course(self, request, courseId):
+        course = Course.objects.filter(id=courseId).first()
+        serializer = serializers.CourseSerializer(course)
+        return Response(serializer.data)
+
+
+
+class HomeworkStatusChange(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, statisticId):
+        statistic = LessonStatistic.objects.filter(id = statisticId).first()
+        stat = request.data['status']
+        statistic.homework_status = int(stat)
+        statistic.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+
+
+
+
 
 class CourseTest(APIView):
 
-    def post(self, request, name):
+    def post(self, request, courseId):
         test = request.data['testResult']
         user = request.user
-        course = Course.objects.filter(name_1=name).first()
+        course = Course.objects.filter(id=courseId).first()
         statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=course.id).exists()
         if not statistic:
             if test['testResult'] and test['testResult'] == '4':
@@ -109,8 +117,6 @@ class SaveChatMessage(APIView):
 
 
 class GetChatMessage(viewsets.ViewSet):
-    permission_classes = (permissions.AllowAny,)
-
 
     def get_message(self, request, statisticId):
         message = Message.objects.filter(lesson_statistic__id = statisticId)

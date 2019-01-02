@@ -51,12 +51,12 @@ class Lesson(models.Model):
 
 class LessonStatistic(models.Model):
     HOMEWORK_STATUS = (
-        ('new', 'new'),
-        ('in_work', 'in_work'),
-        ('on_check', 'on_check'),
-        ('done', 'done')
+        (1 , 'not active'),
+        (2, 'active'),
+        (3, 'on check '),
+        (4, 'done')
     )
-    homework_status = models.CharField(max_length=15, choices=HOMEWORK_STATUS, default="new", verbose_name='Статус домашнего задания')
+    homework_status = models.CharField(max_length=15, choices=HOMEWORK_STATUS, default=1, verbose_name='Статус домашнего задания')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Студент')
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, verbose_name='Урок')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
