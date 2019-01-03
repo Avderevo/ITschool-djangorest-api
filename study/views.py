@@ -7,9 +7,6 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
-
-from users import serializers as user_serializers
 from . import serializers
 from users.serializers import UserSerializer
 
@@ -24,8 +21,8 @@ class LessonVieSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def course_statistic(self, request, courseId):
-        c = CourseStatistic.objects.filter(user=request.user).filter(course_id=courseId)
-        serializer = serializers.CourseStatisticSerializer(c, many=True)
+        c = CourseStatistic.objects.filter(user=request.user).filter(course_id=courseId).first()
+        serializer = serializers.CourseStatisticSerializer(c)
         return  Response(serializer.data)
 
     def user_course_list(self, request):
@@ -49,7 +46,6 @@ class LessonVieSet(viewsets.ViewSet):
 
 
 
-
 class CourseVieSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
@@ -69,10 +65,6 @@ class HomeworkStatusChange(APIView):
         statistic.homework_status = int(stat)
         statistic.save()
         return Response(status=status.HTTP_201_CREATED)
-
-
-
-
 
 
 class CourseTest(APIView):
@@ -101,8 +93,6 @@ class CourseTest(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
 class SaveChatMessage(APIView):
     def post(self, request ):
         data = request.data
@@ -125,26 +115,3 @@ class GetChatMessage(viewsets.ViewSet):
         return Response(s.data)
 
 
-'''class CourseTest(APIView):
-
-    def post(self, request, courseid=1):
-        test = request.data['testResult']
-        if test['testResult'] and test['testResult'] == '4':
-            user= request.user
-            statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=courseid).exists()
-            if not statistic:
-                course = Course.objects.filter(id = courseid).first()
-                course_stat = CourseStatistic()
-                course_stat.user = user
-                course_stat.course = course
-                course_stat.is_active = True
-                course_stat.save()
-                lessons = Lesson.objects.filter(course_id=courseid)
-                for lesson in lessons:
-                    lesson_stat = LessonStatistic()
-                    lesson_stat.lesson = lesson
-                    lesson_stat.user = user
-                    lesson_stat.course = course
-                    lesson_stat.save()
-                return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)'''

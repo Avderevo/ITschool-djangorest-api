@@ -1,4 +1,4 @@
-
+import datetime
 import os
 
 
@@ -104,9 +104,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-import datetime
-
-
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -117,6 +114,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+
+    'DATETIME_FORMAT': "%m/%d/%Y %H:%M:%S",
 
 }
 
@@ -160,3 +159,4 @@ RQ_QUEUES = {
 }
 
 INTERNAL_IPS = '127.0.0.1'
+
