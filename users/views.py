@@ -76,6 +76,6 @@ class ListCourseStudents(APIView):
 
     @staticmethod
     def get(request, courseId):
-        students = User.objects.filter(coursestatistic__course_id=courseId)
+        students = User.objects.filter(coursestatistic__course_id=courseId).filter(profile__status=1)
         serializer = UserSerializer(students, many=True)
         return Response(serializer.data)

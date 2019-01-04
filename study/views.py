@@ -31,7 +31,7 @@ class LessonVieSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_students_statistics(self, request, userId, courseId):
-        qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId)
+        qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId).filter(user__profile__status=1)
         serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
         return Response(serializer.data)
 
@@ -54,6 +54,11 @@ class CourseVieSet(viewsets.ViewSet):
         serializer = serializers.CourseSerializer(course)
         return Response(serializer.data)
 
+    def all_courses(self, request):
+        course = Course.objects.all()
+        serializer = serializers.CourseSerializer(course, many=True)
+        return Response(serializer.data)
+
 
 
 class HomeworkStatusChange(APIView):
@@ -70,12 +75,17 @@ class HomeworkStatusChange(APIView):
 class CourseTest(APIView):
 
     def post(self, request, courseId):
+
+
         test = request.data['testResult']
         user = request.user
         course = Course.objects.filter(id=courseId).first()
         statistic = CourseStatistic.objects.filter(user_id=user.id).filter(course_id=course.id).exists()
+        content = {'message': 'Вы уже прошли тест и зачислены на курс'}
         if not statistic:
+            content = {'message': 'Тест не пройден'}
             if test['testResult'] and test['testResult'] == '4':
+
                 course_stat = CourseStatistic()
                 course_stat.user = user
                 course_stat.course = course
@@ -88,9 +98,10 @@ class CourseTest(APIView):
                     lesson_stat.user = user
                     lesson_stat.course = course
                     lesson_stat.save()
-
+            else:
+                return Response(content, status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SaveChatMessage(APIView):
@@ -113,5 +124,16 @@ class GetChatMessage(viewsets.ViewSet):
         s = serializers.MessageSerializer(message, many=True)
 
         return Response(s.data)
+
+
+class RegisterTeacherOnCourse(APIView):
+
+    def post(self, request, courseId):
+        stat = CourseStatistic.objects.filter(user_id=request.user.id).filter(course_id=courseId).exists()
+        if not stat:
+            CourseStatistic.objects.create(user=request.user, course_id=courseId)
+
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
