@@ -9,9 +9,12 @@ class Activation(models.Model):
 
 
 class Profile(models.Model):
-    is_teacher = models.BooleanField(default=False)
-    is_student = models.BooleanField(default=False)
-    status = models.IntegerField(default=1)
+
+    STATUS = (
+        (1, 'Студент'),
+        (2, 'Преподователь'),
+    )
+    status = models.IntegerField(default=1, choices=STATUS, verbose_name='Статус пользователя')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):

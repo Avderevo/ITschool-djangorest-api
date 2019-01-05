@@ -12,13 +12,13 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = (
-            'name_1', 'name_2','description', 'homework_all', 'id'
+            'name', 'full_name','description', 'homework_all', 'id', 'date_start', 'label'
         )
 
 
 class LessonStatisticSerializer(serializers.ModelSerializer):
     class Meta:
-        mosel = LessonStatistic
+        model = LessonStatistic
         fields = (
             'homework_status', 'user', 'id'
         )

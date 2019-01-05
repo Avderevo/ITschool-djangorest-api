@@ -1,16 +1,13 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from django.contrib.auth.models import User
-from users.models import Activation, Profile
-from ITS_api import settings
-from .mail_sender import send_confirm_email
-from django.contrib.auth.tokens import default_token_generator as dtg
+from users.models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ('__all__')
+        fields = ('status',)
 
 
 class UserSerializer(serializers.ModelSerializer):

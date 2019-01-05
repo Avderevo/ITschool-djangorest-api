@@ -53,13 +53,14 @@ class DetailUser(generics.RetrieveAPIView):
 
 
 class CurrentUserView(APIView):
+
     def get(self, request):
         serializer = UserSerializerWithToken(request.user)
         return Response(serializer.data)
 
 
-
 class ConfirmEmailView(APIView):
+
     @staticmethod
     def get(request, code):
         act = get_object_or_404(Activation, code=code)
@@ -69,7 +70,6 @@ class ConfirmEmailView(APIView):
             user.save()
             act.delete()
             return Response(status=status.HTTP_201_CREATED)
-
 
 
 class ListCourseStudents(APIView):

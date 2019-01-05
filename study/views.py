@@ -37,7 +37,7 @@ class LessonVieSet(viewsets.ViewSet):
 
     def get_teacher_courses(self, request):
         user = request.user
-        if user.profile.is_teacher:
+        if user.profile.status==2:
             course_stat = CourseStatistic.objects.filter(user=request.user)
         else:
             course_stat=[]
@@ -130,10 +130,11 @@ class RegisterTeacherOnCourse(APIView):
 
     def post(self, request, courseId):
         stat = CourseStatistic.objects.filter(user_id=request.user.id).filter(course_id=courseId).exists()
+        content = {'message': 'Вы уже зарегестрированны на этот курс'}
         if not stat:
             CourseStatistic.objects.create(user=request.user, course_id=courseId)
 
             return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
 
 
