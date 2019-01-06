@@ -24,7 +24,6 @@ class BaseViewTest(APITestCase):
         )
 
     def login_client(self, username="", password=""):
-        # get a token from DRF
         response = self.client.post(
             reverse("token-auth"),
             data=json.dumps(
@@ -43,7 +42,7 @@ class BaseViewTest(APITestCase):
         self.client.login(username=username, password=password)
         return self.token
 
-    def register_a_user(self, username="", password="", email=""):
+    def register_a_user(self, username="", password="", email="", status=1):
         return self.client.post(
             reverse(
                 "users:create_user",
@@ -53,7 +52,8 @@ class BaseViewTest(APITestCase):
                 {
                     "username": username,
                     "password": password,
-                    "email": email
+                    "email": email,
+                    "status": status
                 }
             ),
             content_type='application/json'
@@ -67,6 +67,8 @@ class BaseViewTest(APITestCase):
             email="test@mail.com",
             password="testing",
         )
+
+
 
         self.data = {
             'username': self.user.username,
@@ -82,22 +84,20 @@ class AuthLoginUserTest(BaseViewTest):
     """
 
     def test_login_user_with_valid_credentials(self):
-        # test login with valid credentials
+
         response = self.login_a_user("test_user", "testing")
-        # assert token key exists
+
         self.assertIn("token", response.data)
         self.assertIn("user", response.data)
-        # assert status code is 200 OK
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # test login with invalid credentials
+
         response = self.login_a_user("anonymous", "pass")
-        # assert status code is 400
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_jwt_login_json_missing_fields(self):
-        """
-        Ensure JWT login view using JSON POST fails if missing fields.
-        """
+
         response = self.login_a_user("test_user")
 
         self.assertEqual(response.status_code, 400)
@@ -106,24 +106,19 @@ class AuthLoginUserTest(BaseViewTest):
 
 
 class AuthRegisterUserTest(BaseViewTest):
-    """
-    Tests for auth/register/ endpoint
-    """
+
     def test_register_a_user(self):
         response = self.register_a_user("new_user", "new_pass", "new_user@mail.com")
-        # assert status code is 201 CREATED
+
         self.assertEqual(response.data["username"], "new_user")
         self.assertEqual(response.data["email"], "new_user@mail.com")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # test with invalid data
+
         response = self.register_a_user()
-        # assert status code
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_unique_username_validation(self):
-        """
-        Test to verify that a post call with already exists username
-        """
 
         response = self.register_a_user("user_1", "new_pass_1", "new_user_1@mail.com")
 
@@ -135,9 +130,6 @@ class AuthRegisterUserTest(BaseViewTest):
 
 
 class TokenTestCase(BaseViewTest):
-    """
-    Handlers for getting tokens from the API, or creating arbitrary ones.
-    """
 
     def setUp(self):
         super(TokenTestCase, self).setUp()
@@ -150,14 +142,10 @@ class TokenTestCase(BaseViewTest):
 class VerifyJSONWebTokenTestsSymmetric(TokenTestCase):
 
     def test_verify_jwt(self):
-        """
-        Test that a valid, non-expired token will return a 200 response
-        and itself when passed to the validation endpoint.
-        """
+
         client = APIClient(enforce_csrf_checks=True)
         orig_token = self.get_token('test_user', "testing")
 
-        # Now try to get a refreshed token
         response = client.post( reverse(
                 "token-verify",
 
@@ -169,9 +157,7 @@ class VerifyJSONWebTokenTestsSymmetric(TokenTestCase):
         self.assertEqual(response.data['token'], orig_token)
 
     def test_verify_jwt_fails_with_bad_token(self):
-        """
-        Test that an invalid token will fail with the correct error.
-        """
+
         client = APIClient(enforce_csrf_checks=True)
 
         token = "i am not a correctly formed token"
@@ -184,16 +170,14 @@ class VerifyJSONWebTokenTestsSymmetric(TokenTestCase):
 
 
     def test_verify_jwt_fails_with_missing_user(self):
-        """
-        Test that an invalid token will fail with a user that does not exist.
-        """
+
         client = APIClient(enforce_csrf_checks=True)
 
         user = User.objects.create_user(
             email='jsmith@example.com', username='jsmith', password='password')
 
         token = self.get_token('jsmith', 'password')
-        # Delete the user used to make the token
+
         user.delete()
 
         response = client.post(reverse('token-verify'), {'token': token},

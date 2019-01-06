@@ -11,7 +11,6 @@ from . import serializers
 from users.serializers import UserSerializer
 
 
-
 class LessonVieSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
@@ -31,9 +30,12 @@ class LessonVieSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_students_statistics(self, request, userId, courseId):
-        qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId).filter(user__profile__status=1)
-        serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
-        return Response(serializer.data)
+        user = request.user
+        if user.profile.status == 2:
+            qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId).filter(user__profile__status=1)
+            serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def get_teacher_courses(self, request):
         user = request.user
@@ -47,14 +49,14 @@ class LessonVieSet(viewsets.ViewSet):
 
 
 class CourseVieSet(viewsets.ViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
-    def one_course(self, request, courseId):
+    def get_one_course(self, request, courseId):
         course = Course.objects.filter(id=courseId).first()
         serializer = serializers.CourseSerializer(course)
         return Response(serializer.data)
 
-    def all_courses(self, request):
+    def get_all_courses(self, request):
         course = Course.objects.all()
         serializer = serializers.CourseSerializer(course, many=True)
         return Response(serializer.data)
@@ -75,8 +77,6 @@ class HomeworkStatusChange(APIView):
 class CourseTest(APIView):
 
     def post(self, request, courseId):
-
-
         test = request.data['testResult']
         user = request.user
         course = Course.objects.filter(id=courseId).first()
@@ -105,6 +105,7 @@ class CourseTest(APIView):
 
 
 class SaveChatMessage(APIView):
+
     def post(self, request ):
         data = request.data
         user = request.user
