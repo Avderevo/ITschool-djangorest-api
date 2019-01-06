@@ -1,14 +1,11 @@
-from django.shortcuts import render
 from rest_framework import viewsets
-from users.models import Profile
 from rest_framework.views import APIView
 from .models import Course, Lesson, LessonStatistic, CourseStatistic, Message
 from rest_framework.response import Response
-from django.contrib.auth.models import User
 from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated
 from . import serializers
-from users.serializers import UserSerializer
+
 
 
 class LessonVieSet(viewsets.ViewSet):
@@ -30,12 +27,11 @@ class LessonVieSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_students_statistics(self, request, userId, courseId):
-        user = request.user
-        if user.profile.status == 2:
-            qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId).filter(user__profile__status=1)
-            serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
-            return Response(serializer.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        qs = LessonStatistic.objects.filter(user_id=userId).filter(course_id=courseId).filter(user__profile__status=1)
+        serializer = serializers.LessonVsStatisticSerialiser(qs, many=True)
+        return Response(serializer.data)
+
 
     def get_teacher_courses(self, request):
         user = request.user
@@ -71,7 +67,16 @@ class HomeworkStatusChange(APIView):
         stat = request.data['status']
         statistic.homework_status = int(stat)
         statistic.save()
+        self.save_done_status(stat, statistic.user_id)
         return Response(status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def save_done_status(status, userId):
+        if int(status) == 4:
+            course_stat = CourseStatistic.objects.filter(user_id=userId).first()
+            course_stat.homework_done += 1
+            course_stat.save()
+
 
 
 class CourseTest(APIView):
@@ -130,12 +135,14 @@ class GetChatMessage(viewsets.ViewSet):
 class RegisterTeacherOnCourse(APIView):
 
     def post(self, request, courseId):
-        stat = CourseStatistic.objects.filter(user_id=request.user.id).filter(course_id=courseId).exists()
-        content = {'message': 'Вы уже зарегестрированны на этот курс'}
-        if not stat:
-            CourseStatistic.objects.create(user=request.user, course_id=courseId)
+        if request.user.profile.status == 2:
+            stat = CourseStatistic.objects.filter(user_id=request.user.id).filter(course_id=courseId).exists()
+            content = {'message': 'Вы уже зарегестрированны на этот курс'}
+            if not stat:
+                CourseStatistic.objects.create(user=request.user, course_id=courseId)
 
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_201_CREATED)
+            return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
 
 

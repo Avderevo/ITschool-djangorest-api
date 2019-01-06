@@ -55,7 +55,14 @@ class StudyViewApiTest(TokenTestCase):
     def register_teacher_on_course(self, courseId):
         token = self.get_token('teacher', "password")
         url = reverse('study:register_teacher_course', kwargs={'courseId': courseId})
-        response = self.client.post(url, headers={'token': token})
+        self.client.post(url, headers={'token': token})
+
+    def save_chat_message(self, statisticId, message):
+        self.course_test_done(self.course_1_id)
+        token = self.get_token('student', "password")
+        url = reverse('study:save_chat_message')
+        self.client.post(url, headers={'token': token}, data={'statisticId': statisticId, 'message': message})
+
 
     def test_course_test_done(self):
         token = self.get_token('student', "password")
@@ -108,7 +115,7 @@ class StudyViewApiTest(TokenTestCase):
     def test_get_students_statistics(self):
         token = self.get_token('teacher', "password")
         self.course_test_done(self.course_1_id)
-        url = reverse('study:student_statistics', kwargs={'userId':self.user.id, 'courseId':self.course_1_id})
+        url = reverse('study:student_statistics', kwargs={'userId':2, 'courseId':self.course_1_id})
         response = self.client.get(url, headers={'token': token})
         self.assertEqual(response.status_code, 200)
 
@@ -146,7 +153,22 @@ class StudyViewApiTest(TokenTestCase):
         self.assertEqual(response.status_code, 201)
 
 
+    def test_save_chat_message(self):
+        self.course_test_done(self.course_1_id)
+        token = self.get_token('student', "password")
+        url = reverse('study:save_chat_message')
+        response = self.client.post(url, headers={'token': token}, data={'statisticId': 1, 'message':'Hello'})
+        self.assertEqual(response.status_code, 201)
 
+
+    def test_get_chat_message(self):
+        self.course_test_done(self.course_1_id)
+        token = self.get_token('student', "password")
+        self.save_chat_message(1, 'Hello world!')
+        url = reverse('study:get_chat_message', kwargs={'statisticId':1})
+        response=self.client.get(url, headers={'token': token})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['message_body'], 'Hello world!')
 
 
 

@@ -24,7 +24,7 @@ class CourseStatistic(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     homework_done = models.IntegerField(default=0, verbose_name='Сделанных домашек')
-    is_active = models.BooleanField(default=False, verbose_name='Сдал тест')
+    is_active = models.BooleanField(default=False, verbose_name='Тестирование')
     is_paid = models.BooleanField(default=False, verbose_name='Курс оплачен')
 
     def __str__(self):
