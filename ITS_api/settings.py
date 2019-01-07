@@ -119,6 +119,8 @@ REST_FRAMEWORK = {
 
 }
 
+CORS_ORIGIN_ALLOW_ALL = False
+
 CORS_ORIGIN_WHITELIST = (
    'localhost:3000',
 )
@@ -134,8 +136,6 @@ JWT_AUTH  = {
     'JWT_REFRESH_EXPIRATION_DELTA' : datetime.timedelta ( days = 7 ),
     'JWT_AUTH_COOKIE': 'JWT',
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'ITS_api.utils.my_jwt_response_handler',
-
-   # 'JWT_PAYLOAD_HANDLER': 'ITS_api.utils.my_jwt_payload_handler'
 
 }
 

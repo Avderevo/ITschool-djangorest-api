@@ -1,5 +1,9 @@
-# Django-rest-api for site  "IT-school-on-the-React" 
-https://github.com/Avderevo/IT-school-on-the-React
+# ITschool-djangorest-api 
+
+##  This is the api for React spa application: https://github.com/Avderevo/IT-school-on-the-React 
+
+
+
 
 #### Need python 3.6+
 
@@ -27,10 +31,20 @@ $ python manage.py makemigrations users study
 $ python manage.py migrate
 ```
 
-#### !!! ( Для начала работы с курсами, нужно в ручную в админке добавить данные хотя бы для одного Курса - модели "Course" и пару уроков для этого курса - модель "Lesson" )
+#### 6 Loading initial data:
 
-#### 6  Start project:
+```
+$ python manage.py loaddata course.json lessons.json
+
+```
+#### 7 Run Server Dev;
 
 ``` 
 $ python manage.py runserver
+```
+## Run test 
+```
+$ python manage.py test
+
+
 ```
