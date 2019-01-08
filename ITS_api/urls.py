@@ -9,7 +9,7 @@ urlpatterns = [
     path('token-refresh/', refresh_jwt_token, name='token-refresh'),
     path('api-token-verify/', verify_jwt_token, name='token-verify'),
     path('users/', include('users.urls')),
-    path('study/', include('study.urls'))
+    path('study/', include('study.urls')),
 
  ]
 

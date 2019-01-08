@@ -5,7 +5,7 @@
         "fields":
             {
 
-            "name": "Web-python", "full_name": "Web-разработчик на Python", "homework_all": 10, "label": true
+            "name": "Web-python", "full_name": "Web-разработчик на Python", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
         }
 
     },
@@ -14,7 +14,7 @@
         "pk": 2,
         "fields":
             {
-                "name": "C++", "full_name": "Разработчик C++", "homework_all": 10, "label": true
+                "name": "C-plus-plus", "full_name": "Разработчик C++", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
             }
     },
     {
@@ -22,7 +22,7 @@
         "pk": 3,
         "fields":
             {
-                "name": "Python", "full_name": "Pазработчик Python", "homework_all": 10, "label": true
+                "name": "Python", "full_name": "Pазработчик Python", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
             }
     },
     {
@@ -30,7 +30,7 @@
         "pk": 4,
         "fields":
             {
-                "name": "Java", "full_name": "Разработчик Java", "homework_all": 10, "label": true
+                "name": "Java", "full_name": "Разработчик Java", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
             }
     },
     {
@@ -38,7 +38,7 @@
         "pk": 5,
         "fields":
             {
-                "name": "Php", "full_name": "Backend разаработчик на PHP", "homework_all": 10, "label": true
+                "name": "Php", "full_name": "Backend разаработчик на PHP", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
             }
     },
     {
@@ -46,7 +46,7 @@
         "pk": 6,
         "fields":
             {
-                "name": "JS", "full_name": "Разработчик JavaScript", "homework_all": 10, "label": true
+                "name": "JS", "full_name": "Разработчик JavaScript", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
             }
     },
     {
@@ -54,7 +54,7 @@
         "pk": 7,
         "fields":
             {
-                "name": "Android", "full_name": "Разработчик Android", "homework_all": 10, "label": true
+                "name": "Android", "full_name": "Разработчик Android", "homework_all": 10, "label": true, "date_start": "Старт курса в феврале"
             }
     }
 
