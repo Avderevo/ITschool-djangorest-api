@@ -1,10 +1,6 @@
 from .models import Course, Lesson, Message, LessonStatistic, CourseStatistic
-from users.models import  Profile
 from rest_framework import serializers
-from rest_framework_jwt.settings import api_settings
-from django.contrib.auth.models import User
 from users.serializers import UserSerializer
-
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -17,6 +13,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class LessonStatisticSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = LessonStatistic
         fields = (
@@ -32,12 +29,10 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ('message_body', 'date', 'user', 'lesson_statistic', 'id')
 
 
-
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ('lesson_title', 'is_homework', 'homework_title', 'lesson_number', 'id')
-
+        fields = ('lesson_title', 'is_homework', 'homework_title', 'date', 'lesson_number', 'id')
 
 
 class LessonVsStatisticSerialiser(serializers.ModelSerializer):
@@ -58,7 +53,3 @@ class CourseStatisticSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseStatistic
         fields = ('course', 'homework_done', 'is_active', 'is_paid', 'id')
-
-
-
-

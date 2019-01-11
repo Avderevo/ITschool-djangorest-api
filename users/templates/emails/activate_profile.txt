@@ -1,4 +1,4 @@
 
-'To activate your profile, please follow this link:'
+'Для активации аккаунта нажмите ссылку:'
 
 {{ uri }}

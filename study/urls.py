@@ -1,9 +1,7 @@
-
 from django.urls import path
 from . import views
 
 app_name = 'study'
-
 
 urlpatterns = [
     path('studyroom/<int:courseId>/', views.LessonVieSet.as_view({'get':'lesson_vs_statistic'}), name='user_statistics'),
@@ -14,6 +12,8 @@ urlpatterns = [
 
     path('one_course/<int:courseId>/', views.CourseVieSet.as_view({'get': 'get_one_course'}), name='get_one_course'),
     path('all_courses/', views.CourseVieSet.as_view({'get': 'get_all_courses'}), name='get_all_courses'),
+
+    path('short_teachers_list/', views.TeachersVieSet.as_view({'get': 'get_short_teacher_list'}), name='short_teachers_list'),
 
     path('course_test/<int:courseId>/', views.CourseTest.as_view(), name='course_test'),
     path('create_message/', views.SaveChatMessage.as_view(), name='save_chat_message'),

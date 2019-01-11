@@ -12,5 +12,3 @@ urlpatterns = [
     path('study/', include('study.urls')),
 
  ]
-
-
