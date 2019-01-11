@@ -37,7 +37,12 @@ $ python manage.py migrate
 $ python manage.py loaddata course.json lessons.json
 
 ```
-#### 7 Run Server Dev;
+#### 7  Run the configuration:
+
+```
+$ export DJANGO_CONFIGURATION=Dev
+```
+#### 8 Run Server Dev:
 
 ``` 
 $ python manage.py runserver
