@@ -24,7 +24,7 @@ class UserCreate(APIView):
         if serializer.is_valid():
             serializer.save()
             try:
-                user = User.objects.get(username = request.data['username'])
+                user = User.objects.get(username=request.data['username'])
             except User.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             Profile.objects.create(user=user, status=int(request.data['status']))
@@ -32,7 +32,7 @@ class UserCreate(APIView):
             if settings.USER_EMAIL_ACTIVATION:
                 user.is_active = False
                 code = dtg.make_token(user)
-                Activation.objects.create(code = code, user = user)
+                Activation.objects.create(code=code, user=user)
                 user.save()
                 send_confirm_email(request, user.email, code)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
